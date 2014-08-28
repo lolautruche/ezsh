@@ -1,9 +1,14 @@
 #!/usr/bin/env php
 <?php
 
-use Symfony\Component\Debug\Debug;
 use eZ\Publish\Core\MVC\Symfony\SiteAccess;
+use Psy\Configuration;
 use Psy\Shell;
+use Symfony\Component\Console\Input\ArgvInput;
+use Symfony\Component\Console\Input\InputArgument;
+use Symfony\Component\Console\Input\InputDefinition;
+use Symfony\Component\Console\Input\InputOption;
+use Symfony\Component\Debug\Debug;
 
 /* <<< */
 if (is_file(__DIR__ . '/../autoload.php')) {
@@ -21,42 +26,115 @@ if (is_file(__DIR__ . '/../autoload.php')) {
 }
 /* >>> */
 
-$root = getcwd();
+require_once getcwd().'/ezpublish/autoload.php';
+require_once getcwd().'/ezpublish/EzPublishKernel.php';
 
-require_once $root.'/ezpublish/autoload.php';
-require_once $root.'/ezpublish/EzPublishKernel.php';
+call_user_func(function() {
 
-$environment = getenv('EZ_ENV') ?: 'dev';
-// Depending on the USE_DEBUGGING environment variable, tells whether Symfony should be loaded with debugging.
-// If not set it is activated if in "dev" environment.
-if (($useDebugging = getenv('EZ_DEBUG')) === false) {
-    $useDebugging = $environment === "dev";
-}
+    $usageException = null;
 
-if ($useDebugging) {
-    Debug::enable();
-}
+    $input = new ArgvInput();
+    try {
+        $input->bind(new InputDefinition(array(
+            new InputOption('help',    'h',  InputOption::VALUE_NONE),
+            new InputOption('config',  'c',  InputOption::VALUE_REQUIRED),
+            new InputOption('env',     'e',  InputOption::VALUE_REQUIRED),
+            new InputOption('debug',   null, InputOption::VALUE_NONE),
+            new InputOption('version', 'v',  InputOption::VALUE_NONE),
 
-$kernel = new EzPublishKernel('dev', true);
-$kernel->loadClassCache();
-$kernel->boot();
+            new InputArgument('include', InputArgument::IS_ARRAY),
+        )));
+    } catch (\RuntimeException $e) {
+        $usageException = $e;
+    }
 
-$container = $kernel->getContainer();
-$container->set('ezpublish.siteaccess', new SiteAccess($container->getParameter('ezpublish.siteaccess.default')));
-$legacyHandlerCLI = $container->get( 'ezpublish_legacy.kernel_handler.cli' );
-// Force CLI mode for legacy stack.
-$container->set('ezpublish_legacy.kernel.lazy', null);
-$container->set('ezpublish_legacy.kernel_handler', $legacyHandlerCLI);
-$container->set('ezpublish_legacy.kernel_handler.web', $legacyHandlerCLI);
+    $config = array();
 
-$container->get('cache_clearer')->clear($kernel->getCacheDir());
+    // handle --config
+    if ($configFile = $input->getOption('config')) {
+        $config['configFile'] = $configFile;
+    }
 
-$sh = new Shell();
-$sh->setScopeVariables([
-    'kernel' => $kernel,
-    'container' => $container,
-    'configResolver' => $container->get('ezpublish.config.resolver'),
-    'repository' => $container->get('ezpublish.api.repository')
-]);
-$sh->run();
+    // handle --env
+    if (($environment = $input->getOption('config')) === null) {
+        $environment = genenv('EZ_ENV') ?: 'dev';
+    }
 
+    // handle --debug
+    // Depending on the USE_DEBUGGING environment variable, tells whether Symfony should be loaded with debugging.
+    // If not set it is activated if in "dev" environment.
+    if (($useDebugging = $input->getOption('debug')) === null) {
+        if (($useDebugging = getenv('EZ_DEBUG')) === false) {
+            $useDebugging = $environment === "dev";
+        }
+    }
+
+    if ($useDebugging) {
+        Debug::enable();
+    }
+
+    $sh = new Shell(new Configuration($config));
+
+    // handle --help
+    if ($usageException !== null || $input->getOption('help')) {
+        if ($usageException !== null) {
+            echo $usageException->getMessage() . PHP_EOL . PHP_EOL;
+        }
+
+        $version = $sh->getVersion();
+        $name    = reset($_SERVER['argv']);
+        echo <<<EOL
+$version
+
+Usage:
+  $name [--version] [--help] [files...]
+
+Options:
+  --help     -h Display this help message.
+  --config   -c Use an alternate PsySH config file location.
+  --env      -e Use a different environment.
+  --debug       Load Symfony with debugging enabled.
+  --version  -v Display the PsySH version.
+
+EOL;
+        exit($usageException === null ? 0 : 1);
+
+    }
+
+
+    // handle --version
+    if ($input->getOption('version')) {
+        echo $sh->getVersion() . PHP_EOL;
+        exit(0);
+    }
+
+
+    // TODO: should this pass in $environment?
+    $kernel = new EzPublishKernel('dev', true);
+    $kernel->loadClassCache();
+    $kernel->boot();
+
+    $container = $kernel->getContainer();
+    $container->set('ezpublish.siteaccess', new SiteAccess($container->getParameter('ezpublish.siteaccess.default')));
+    $legacyHandlerCLI = $container->get( 'ezpublish_legacy.kernel_handler.cli' );
+    // Force CLI mode for legacy stack.
+    $container->set('ezpublish_legacy.kernel.lazy', null);
+    $container->set('ezpublish_legacy.kernel_handler', $legacyHandlerCLI);
+    $container->set('ezpublish_legacy.kernel_handler.web', $legacyHandlerCLI);
+
+    $container->get('cache_clearer')->clear($kernel->getCacheDir());
+
+
+    $sh->setScopeVariables([
+        'kernel' => $kernel,
+        'container' => $container,
+        'configResolver' => $container->get('ezpublish.config.resolver'),
+        'repository' => $container->get('ezpublish.api.repository')
+    ]);
+
+
+    // Pass additional arguments to Shell as 'includes'
+    $sh->setIncludes($input->getArgument('include'));
+
+    $sh->run();
+});
