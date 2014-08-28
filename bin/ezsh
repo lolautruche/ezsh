@@ -3,6 +3,7 @@
 
 use Symfony\Component\Debug\Debug;
 use eZ\Publish\Core\MVC\Symfony\SiteAccess;
+use Psy\Shell;
 
 /* <<< */
 if (is_file(__DIR__ . '/../autoload.php')) {
@@ -24,8 +25,6 @@ $root = getcwd();
 
 require_once $root.'/ezpublish/autoload.php';
 require_once $root.'/ezpublish/EzPublishKernel.php';
-
-use Psy\Shell;
 
 $environment = getenv('EZ_ENV') ?: 'dev';
 // Depending on the USE_DEBUGGING environment variable, tells whether Symfony should be loaded with debugging.
@@ -52,10 +51,12 @@ $container->set('ezpublish_legacy.kernel_handler.web', $legacyHandlerCLI);
 
 $container->get('cache_clearer')->clear($kernel->getCacheDir());
 
-extract(Shell::debug([
+$sh = new Shell();
+$sh->setScopeVariables([
     'kernel' => $kernel,
     'container' => $container,
     'configResolver' => $container->get('ezpublish.config.resolver'),
     'repository' => $container->get('ezpublish.api.repository')
-]));
+]);
+$sh->run();
 
