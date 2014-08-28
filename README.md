@@ -67,15 +67,6 @@ Some variables are already set for you, like the service container, the ConfigRe
 | `$repository`     | Instance of the eZ Content repository (to use API)              |
 | `$configResolver` | The ConfigResolver (to get SiteAccess aware settings)           |
 
-### Environment
-You can define the environment to work in (e.g. `dev`, `prod`, ...) by setting the `EZ_ENV` environment variable before launching `ezsh`:
-
-```bash
-# This will launch the shell in "prod" environment
-$ export EZ_ENV="prod"
-$ ezsh
-```
-
 ### Example
 
 > From the debug shell, you can define any kind of functions, loops, conditions...<br>
