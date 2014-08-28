@@ -52,5 +52,10 @@ $container->set('ezpublish_legacy.kernel_handler.web', $legacyHandlerCLI);
 
 $container->get('cache_clearer')->clear($kernel->getCacheDir());
 
-extract(Shell::debug(array('kernel' => $kernel, 'container' => $container)));
+extract(Shell::debug([
+    'kernel' => $kernel,
+    'container' => $container,
+    'configResolver' => $container->get('ezpublish.config.resolver'),
+    'repository' => $container->get('ezpublish.api.repository')
+]));
 
