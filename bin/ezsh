@@ -2,6 +2,7 @@
 <?php
 
 use Symfony\Component\Debug\Debug;
+use eZ\Publish\Core\MVC\Symfony\SiteAccess;
 
 /* <<< */
 if (is_file(__DIR__ . '/../autoload.php')) {
@@ -42,6 +43,7 @@ $kernel->loadClassCache();
 $kernel->boot();
 
 $container = $kernel->getContainer();
+$container->set('ezpublish.siteaccess', new SiteAccess($container->getParameter('ezpublish.siteaccess.default')));
 $legacyHandlerCLI = $container->get( 'ezpublish_legacy.kernel_handler.cli' );
 // Force CLI mode for legacy stack.
 $container->set( 'ezpublish_legacy.kernel.lazy', null );
