@@ -35,6 +35,7 @@ call_user_func(function() {
     try {
         $input->bind(new InputDefinition(array(
             new InputOption('env',     'e',  InputOption::VALUE_REQUIRED),
+            new InputOption('debug',   null, InputOption::VALUE_NONE),
         )));
     } catch (\RuntimeException $e) {
         $usageException = $e;
@@ -45,10 +46,13 @@ call_user_func(function() {
         $environment = genenv('EZ_ENV') ?: 'dev';
     }
 
+    // handle --debug
     // Depending on the USE_DEBUGGING environment variable, tells whether Symfony should be loaded with debugging.
     // If not set it is activated if in "dev" environment.
-    if (($useDebugging = getenv('EZ_DEBUG')) === false) {
-        $useDebugging = $environment === "dev";
+    if (($useDebugging = $input->getOption('debug')) === null) {
+        if (($useDebugging = getenv('EZ_DEBUG')) === false) {
+            $useDebugging = $environment === "dev";
+        }
     }
 
     if ($useDebugging) {
