@@ -12,5 +12,5 @@
     "require": {
         "psy/psysh": "~0.1"
     },
-    "bin": ["bin/psysh"]
+    "bin": ["bin/ezsh"]
 }
