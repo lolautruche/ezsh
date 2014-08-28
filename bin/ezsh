@@ -2,8 +2,10 @@
 <?php
 
 use eZ\Publish\Core\MVC\Symfony\SiteAccess;
+use Psy\Configuration;
 use Psy\Shell;
 use Symfony\Component\Console\Input\ArgvInput;
+use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputDefinition;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Debug\Debug;
@@ -34,11 +36,23 @@ call_user_func(function() {
     $input = new ArgvInput();
     try {
         $input->bind(new InputDefinition(array(
+            new InputOption('help',    'h',  InputOption::VALUE_NONE),
+            new InputOption('config',  'c',  InputOption::VALUE_REQUIRED),
             new InputOption('env',     'e',  InputOption::VALUE_REQUIRED),
             new InputOption('debug',   null, InputOption::VALUE_NONE),
+            new InputOption('version', 'v',  InputOption::VALUE_NONE),
+
+            new InputArgument('include', InputArgument::IS_ARRAY),
         )));
     } catch (\RuntimeException $e) {
         $usageException = $e;
+    }
+
+    $config = array();
+
+    // handle --config
+    if ($configFile = $input->getOption('config')) {
+        $config['configFile'] = $configFile;
     }
 
     // handle --env
@@ -59,6 +73,43 @@ call_user_func(function() {
         Debug::enable();
     }
 
+    $sh = new Shell(new Configuration($config));
+
+    // handle --help
+    if ($usageException !== null || $input->getOption('help')) {
+        if ($usageException !== null) {
+            echo $usageException->getMessage() . PHP_EOL . PHP_EOL;
+        }
+
+        $version = $sh->getVersion();
+        $name    = reset($_SERVER['argv']);
+        echo <<<EOL
+$version
+
+Usage:
+  $name [--version] [--help] [files...]
+
+Options:
+  --help     -h Display this help message.
+  --config   -c Use an alternate PsySH config file location.
+  --env      -e Use a different environment.
+  --debug       Load Symfony with debugging enabled.
+  --version  -v Display the PsySH version.
+
+EOL;
+        exit($usageException === null ? 0 : 1);
+
+    }
+
+
+    // handle --version
+    if ($input->getOption('version')) {
+        echo $sh->getVersion() . PHP_EOL;
+        exit(0);
+    }
+
+
+    // TODO: should this pass in $environment?
     $kernel = new EzPublishKernel('dev', true);
     $kernel->loadClassCache();
     $kernel->boot();
@@ -73,12 +124,17 @@ call_user_func(function() {
 
     $container->get('cache_clearer')->clear($kernel->getCacheDir());
 
-    $sh = new Shell();
+
     $sh->setScopeVariables([
         'kernel' => $kernel,
         'container' => $container,
         'configResolver' => $container->get('ezpublish.config.resolver'),
         'repository' => $container->get('ezpublish.api.repository')
     ]);
+
+
+    // Pass additional arguments to Shell as 'includes'
+    $sh->setIncludes($input->getArgument('include'));
+
     $sh->run();
 });
