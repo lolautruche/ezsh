@@ -46,9 +46,9 @@ $container = $kernel->getContainer();
 $container->set('ezpublish.siteaccess', new SiteAccess($container->getParameter('ezpublish.siteaccess.default')));
 $legacyHandlerCLI = $container->get( 'ezpublish_legacy.kernel_handler.cli' );
 // Force CLI mode for legacy stack.
-$container->set( 'ezpublish_legacy.kernel.lazy', null );
-$container->set( 'ezpublish_legacy.kernel_handler', $legacyHandlerCLI );
-$container->set( 'ezpublish_legacy.kernel_handler.web', $legacyHandlerCLI );
+$container->set('ezpublish_legacy.kernel.lazy', null);
+$container->set('ezpublish_legacy.kernel_handler', $legacyHandlerCLI);
+$container->set('ezpublish_legacy.kernel_handler.web', $legacyHandlerCLI);
 
 $container->get('cache_clearer')->clear($kernel->getCacheDir());
 
