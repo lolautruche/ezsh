@@ -10,6 +10,8 @@ use Symfony\Component\Console\Input\InputDefinition;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Debug\Debug;
 
+define('EZSH_VERSION', 'eZ Debug Shell v0.1-dev');
+
 /* <<< */
 if (is_file(__DIR__ . '/../autoload.php')) {
     require(__DIR__ . '/../autoload.php');
@@ -36,11 +38,12 @@ call_user_func(function() {
     $input = new ArgvInput();
     try {
         $input->bind(new InputDefinition(array(
-            new InputOption('help',    'h',  InputOption::VALUE_NONE),
-            new InputOption('config',  'c',  InputOption::VALUE_REQUIRED),
-            new InputOption('env',     'e',  InputOption::VALUE_REQUIRED),
-            new InputOption('debug',   null, InputOption::VALUE_NONE),
+            new InputOption('help', 'h', InputOption::VALUE_NONE),
+            new InputOption('config', 'c', InputOption::VALUE_REQUIRED),
+            new InputOption('env', 'e', InputOption::VALUE_REQUIRED),
+            new InputOption('debug', 'd',InputOption::VALUE_NONE),
             new InputOption('version', 'v',  InputOption::VALUE_NONE),
+            new InputOption('siteaccess', 's', InputOption::VALUE_REQUIRED),
 
             new InputArgument('include', InputArgument::IS_ARRAY),
         )));
@@ -48,27 +51,15 @@ call_user_func(function() {
         $usageException = $e;
     }
 
-    $config = array();
-
     // handle --config
+    $config = array();
     if ($configFile = $input->getOption('config')) {
         $config['configFile'] = $configFile;
     }
 
-    // handle --env
-    if (($environment = $input->getOption('config')) === null) {
-        $environment = genenv('EZ_ENV') ?: 'dev';
-    }
-
-    // handle --debug
-    // Depending on the USE_DEBUGGING environment variable, tells whether Symfony should be loaded with debugging.
-    // If not set it is activated if in "dev" environment.
-    if (($useDebugging = $input->getOption('debug')) === null) {
-        if (($useDebugging = getenv('EZ_DEBUG')) === false) {
-            $useDebugging = $environment === "dev";
-        }
-    }
-
+    $environment = $input->getOption('env') ?: 'dev';
+    $useDebugging = $input->getOption('debug') ?: $environment === 'dev';
+    $siteAccess = $input->getOption('siteaccess');
     if ($useDebugging) {
         Debug::enable();
     }
@@ -81,7 +72,7 @@ call_user_func(function() {
             echo $usageException->getMessage() . PHP_EOL . PHP_EOL;
         }
 
-        $version = $sh->getVersion();
+        $version = EZSH_VERSION;
         $name    = reset($_SERVER['argv']);
         echo <<<EOL
 $version
@@ -90,34 +81,42 @@ Usage:
   $name [--version] [--help] [files...]
 
 Options:
-  --help     -h Display this help message.
-  --config   -c Use an alternate PsySH config file location.
-  --env      -e Use a different environment.
-  --debug       Load Symfony with debugging enabled.
-  --version  -v Display the PsySH version.
+  --env           -e Environment to use (defaults to "dev").
+  --debug         -d Use debugging if provided. Debug is always on with "dev" environment.
+  --siteaccess    -s SiteAccess to use (e.g. ezdemo_site). If not provided, fallbacks to configured default SiteAccess.
+  --help          -h Display this help message.
+  --version       -v Display the PsySH version.
+  --config        -c Use an alternate PsySH config file location.
 
 EOL;
         exit($usageException === null ? 0 : 1);
 
     }
 
-
     // handle --version
     if ($input->getOption('version')) {
-        echo $sh->getVersion() . PHP_EOL;
+        echo EZSH_VERSION . PHP_EOL;
         exit(0);
     }
 
+    // #####
+    // Now doing serious things :)
+    // #####
+    echo "Debugging eZ Publish using '" . ($siteAccess ?: 'default') . "' SiteAccess, in '$environment' environment." . PHP_EOL . PHP_EOL;
 
-    // TODO: should this pass in $environment?
-    $kernel = new EzPublishKernel('dev', true);
+    $kernel = new EzPublishKernel($environment, $useDebugging);
     $kernel->loadClassCache();
     $kernel->boot();
 
+    /** @var \Symfony\Component\DependencyInjection\ContainerInterface $container */
     $container = $kernel->getContainer();
-    $container->set('ezpublish.siteaccess', new SiteAccess($container->getParameter('ezpublish.siteaccess.default')));
-    $legacyHandlerCLI = $container->get( 'ezpublish_legacy.kernel_handler.cli' );
+    $container->set(
+        'ezpublish.siteaccess',
+        new SiteAccess($input->getOption('siteaccess') ?: $container->getParameter('ezpublish.siteaccess.default'))
+    );
+
     // Force CLI mode for legacy stack.
+    $legacyHandlerCLI = $container->get( 'ezpublish_legacy.kernel_handler.cli' );
     $container->set('ezpublish_legacy.kernel.lazy', null);
     $container->set('ezpublish_legacy.kernel_handler', $legacyHandlerCLI);
     $container->set('ezpublish_legacy.kernel_handler.web', $legacyHandlerCLI);
