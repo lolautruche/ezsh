@@ -1,0 +1,16 @@
+{
+    "name": "lolautruche/ezsh",
+    "description": "Interactive debug shell for eZ Publish 5+ apps. Uses PsySH.",
+    "keywords": ["ezpublish", "debug", "console", "interactive", "shell", "repl"],
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Jerome Vieilledent",
+            "email": "lolautruche@gmail.com"
+        }
+    ],
+    "require": {
+        "psy/psysh": "~0.1"
+    },
+    "bin": ["bin/psysh"]
+}
