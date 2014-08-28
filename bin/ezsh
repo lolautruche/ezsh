@@ -1,0 +1,54 @@
+#!/usr/bin/env php
+<?php
+
+use Symfony\Component\Debug\Debug;
+
+/* <<< */
+if (is_file(__DIR__ . '/../autoload.php')) {
+    require(__DIR__ . '/../autoload.php');
+} elseif (is_file(__DIR__ . '/../vendor/autoload.php')) {
+    require(__DIR__ . '/../vendor/autoload.php');
+} elseif (is_file(__DIR__ . '/../../../autoload.php')) {
+    require(__DIR__ . '/../../../autoload.php');
+} else {
+    die(
+        'You must set up the Psy Shell dependencies, run the following commands:' . PHP_EOL .
+        'curl -s http://getcomposer.org/installer | php' . PHP_EOL .
+        'php composer.phar install' . PHP_EOL
+    );
+}
+/* >>> */
+
+$root = getcwd();
+
+require_once $root.'/ezpublish/autoload.php';
+require_once $root.'/ezpublish/EzPublishKernel.php';
+
+use Psy\Shell;
+
+$environment = getenv('EZ_ENV') ?: 'dev';
+// Depending on the USE_DEBUGGING environment variable, tells whether Symfony should be loaded with debugging.
+// If not set it is activated if in "dev" environment.
+if (($useDebugging = getenv('EZ_DEBUG')) === false) {
+    $useDebugging = $environment === "dev";
+}
+
+if ($useDebugging) {
+    Debug::enable();
+}
+
+$kernel = new EzPublishKernel('dev', true);
+$kernel->loadClassCache();
+$kernel->boot();
+
+$container = $kernel->getContainer();
+$legacyHandlerCLI = $container->get( 'ezpublish_legacy.kernel_handler.cli' );
+// Force CLI mode for legacy stack.
+$container->set( 'ezpublish_legacy.kernel.lazy', null );
+$container->set( 'ezpublish_legacy.kernel_handler', $legacyHandlerCLI );
+$container->set( 'ezpublish_legacy.kernel_handler.web', $legacyHandlerCLI );
+
+$container->get('cache_clearer')->clear($kernel->getCacheDir());
+
+extract(Shell::debug(array('kernel' => $kernel, 'container' => $container)));
+
