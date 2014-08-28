@@ -27,16 +27,30 @@ composer require lolautruche/ezsh:dev-master
 ```
 
 ## Usage
-To be able to use `ezsh`, **you first need to be in your eZ project root**:
+```bash
+Usage:
+  ezsh [--siteaccess=<siteaccess_name>] [--env=<env>] [--debug] [--version] [--help] [files...]
+
+Options:
+  --siteaccess    -s SiteAccess to use (e.g. ezdemo_site). If not provided, fallbacks to configured default SiteAccess.
+  --env           -e Environment to use (defaults to "dev").
+  --debug         -d Use debugging if provided. Debug is always on with "dev" environment.
+  --help          -h Display this help message.
+  --version       -v Display the PsySH version.
+  --config        -c Use an alternate PsySH config file location.
+```
+
+> **Important:** To be able to use `ezsh`, **you first need to be in your eZ project root**:
 
 ```bash
 cd /my/ezpublish/root
-ezsh
+ezsh --siteaccess=my_siteaccess
 ```
 
 This will display something like:
 
 ```bash
+Debugging eZ Publish using 'my_siteaccess' SiteAccess, in 'dev' environment.
 Psy Shell v0.1.12 (PHP 5.5.15 — cli) by Justin Hileman
 >>>
 ```
@@ -68,7 +82,7 @@ $ ezsh
 > For more information see [PsySH documentation](http://psysh.org).
 
 ```bash
-ezsh
+Debugging eZ Publish using 'default' SiteAccess, in 'dev' environment.
 
 Psy Shell v0.1.12 (PHP 5.5.15 — cli) by Justin Hileman
 >>> $repository
