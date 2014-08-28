@@ -64,6 +64,9 @@ $ ezsh
 
 ### Example
 
+> From the debug shell, you can define any kind of functions, loops, conditions...<br>
+> For more information see [PsySH documentation](http://psysh.org).
+
 ```bash
 ezsh
 
