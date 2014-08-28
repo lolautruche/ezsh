@@ -75,50 +75,34 @@ Psy Shell v0.1.12 (PHP 5.5.15 — cli) by Justin Hileman
 => <eZPublishCoreSignalSlotRepository_000000001c2171540000000109a6622a #000000005890a1640000000113a69e24> {}
 >>> $contentInfo = $repository->getContentService()->loadContentInfo(60);
 => <eZ\Publish\API\Repository\Values\Content\ContentInfo #000000005890a2330000000113a69e24> {}
->>> var_dump($contentInfo);
-class eZ\Publish\API\Repository\Values\Content\ContentInfo#616 (13) {
-  protected $id =>
-  int(60)
-  protected $contentTypeId =>
-  int(22)
-  protected $name =>
-  string(8) "Feedback"
-  protected $sectionId =>
-  int(1)
-  protected $currentVersionNo =>
-  int(1)
-  protected $published =>
-  bool(true)
-  protected $ownerId =>
-  int(14)
-  protected $modificationDate =>
-  class DateTime#615 (3) {
-    public $date =>
-    string(26) "2013-01-22 16:15:17.000000"
-    public $timezone_type =>
-    int(3)
-    public $timezone =>
-    string(12) "Europe/Paris"
-  }
-  protected $publishedDate =>
-  class DateTime#620 (3) {
-    public $date =>
-    string(26) "2013-01-22 15:02:10.000000"
-    public $timezone_type =>
-    int(3)
-    public $timezone =>
-    string(12) "Europe/Paris"
-  }
-  protected $alwaysAvailable =>
-  int(0)
-  protected $remoteId =>
-  string(32) "6442aa1a9c5ed4cbfe2bc8d26fade210"
-  protected $mainLanguageCode =>
-  string(6) "eng-GB"
-  protected $mainLocationId =>
-  string(2) "62"
-}
-=> null
+>>> ls -la $contentInfo
+
+Class Properties:
+  $alwaysAvailable    0
+  $contentTypeId      40
+  $currentVersionNo   1
+  $id                 2926
+  $mainLanguageCode   "eng-GB"
+  $mainLocationId     "2928"
+  $modificationDate   <DateTime #0000000005c1481a000000016239202d>
+  $name               "Wheelchair Barleywine"
+  $ownerId            14
+  $published          true
+  $publishedDate      <DateTime #0000000005c1481b000000016239202d>
+  $remoteId           "beer-d7nEsv"
+  $sectionId          1
+
+Class Methods:
+  __construct     public function __construct(array $properties = null)
+  __get           public function __get($property)
+  __isset         public function __isset($property)
+  __set           public function __set($property, $value)
+  __set_state     public static function __set_state(array $array)
+  __unset         public function __unset($property)
+  attribute       final public function attribute($property)
+  attributes      final public function attributes()
+  getProperties   protected function getProperties($dynamicProperties = null)
+  hasAttribute    final public function hasAttribute($property)
 
 >>> $configResolver->getParameter('languages');
 => [
