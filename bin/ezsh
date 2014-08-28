@@ -1,9 +1,12 @@
 #!/usr/bin/env php
 <?php
 
-use Symfony\Component\Debug\Debug;
 use eZ\Publish\Core\MVC\Symfony\SiteAccess;
 use Psy\Shell;
+use Symfony\Component\Console\Input\ArgvInput;
+use Symfony\Component\Console\Input\InputDefinition;
+use Symfony\Component\Console\Input\InputOption;
+use Symfony\Component\Debug\Debug;
 
 /* <<< */
 if (is_file(__DIR__ . '/../autoload.php')) {
@@ -26,7 +29,22 @@ require_once getcwd().'/ezpublish/EzPublishKernel.php';
 
 call_user_func(function() {
 
-    $environment = getenv('EZ_ENV') ?: 'dev';
+    $usageException = null;
+
+    $input = new ArgvInput();
+    try {
+        $input->bind(new InputDefinition(array(
+            new InputOption('env',     'e',  InputOption::VALUE_REQUIRED),
+        )));
+    } catch (\RuntimeException $e) {
+        $usageException = $e;
+    }
+
+    // handle --env
+    if (($environment = $input->getOption('config')) === null) {
+        $environment = genenv('EZ_ENV') ?: 'dev';
+    }
+
     // Depending on the USE_DEBUGGING environment variable, tells whether Symfony should be loaded with debugging.
     // If not set it is activated if in "dev" environment.
     if (($useDebugging = getenv('EZ_DEBUG')) === false) {
