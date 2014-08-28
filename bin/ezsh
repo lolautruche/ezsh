@@ -21,42 +21,42 @@ if (is_file(__DIR__ . '/../autoload.php')) {
 }
 /* >>> */
 
-$root = getcwd();
+require_once getcwd().'/ezpublish/autoload.php';
+require_once getcwd().'/ezpublish/EzPublishKernel.php';
 
-require_once $root.'/ezpublish/autoload.php';
-require_once $root.'/ezpublish/EzPublishKernel.php';
+call_user_func(function() {
 
-$environment = getenv('EZ_ENV') ?: 'dev';
-// Depending on the USE_DEBUGGING environment variable, tells whether Symfony should be loaded with debugging.
-// If not set it is activated if in "dev" environment.
-if (($useDebugging = getenv('EZ_DEBUG')) === false) {
-    $useDebugging = $environment === "dev";
-}
+    $environment = getenv('EZ_ENV') ?: 'dev';
+    // Depending on the USE_DEBUGGING environment variable, tells whether Symfony should be loaded with debugging.
+    // If not set it is activated if in "dev" environment.
+    if (($useDebugging = getenv('EZ_DEBUG')) === false) {
+        $useDebugging = $environment === "dev";
+    }
 
-if ($useDebugging) {
-    Debug::enable();
-}
+    if ($useDebugging) {
+        Debug::enable();
+    }
 
-$kernel = new EzPublishKernel('dev', true);
-$kernel->loadClassCache();
-$kernel->boot();
+    $kernel = new EzPublishKernel('dev', true);
+    $kernel->loadClassCache();
+    $kernel->boot();
 
-$container = $kernel->getContainer();
-$container->set('ezpublish.siteaccess', new SiteAccess($container->getParameter('ezpublish.siteaccess.default')));
-$legacyHandlerCLI = $container->get( 'ezpublish_legacy.kernel_handler.cli' );
-// Force CLI mode for legacy stack.
-$container->set('ezpublish_legacy.kernel.lazy', null);
-$container->set('ezpublish_legacy.kernel_handler', $legacyHandlerCLI);
-$container->set('ezpublish_legacy.kernel_handler.web', $legacyHandlerCLI);
+    $container = $kernel->getContainer();
+    $container->set('ezpublish.siteaccess', new SiteAccess($container->getParameter('ezpublish.siteaccess.default')));
+    $legacyHandlerCLI = $container->get( 'ezpublish_legacy.kernel_handler.cli' );
+    // Force CLI mode for legacy stack.
+    $container->set('ezpublish_legacy.kernel.lazy', null);
+    $container->set('ezpublish_legacy.kernel_handler', $legacyHandlerCLI);
+    $container->set('ezpublish_legacy.kernel_handler.web', $legacyHandlerCLI);
 
-$container->get('cache_clearer')->clear($kernel->getCacheDir());
+    $container->get('cache_clearer')->clear($kernel->getCacheDir());
 
-$sh = new Shell();
-$sh->setScopeVariables([
-    'kernel' => $kernel,
-    'container' => $container,
-    'configResolver' => $container->get('ezpublish.config.resolver'),
-    'repository' => $container->get('ezpublish.api.repository')
-]);
-$sh->run();
-
+    $sh = new Shell();
+    $sh->setScopeVariables([
+        'kernel' => $kernel,
+        'container' => $container,
+        'configResolver' => $container->get('ezpublish.config.resolver'),
+        'repository' => $container->get('ezpublish.api.repository')
+    ]);
+    $sh->run();
+});
