@@ -45,6 +45,7 @@ call_user_func(function() {
             new InputOption('version', 'v',  InputOption::VALUE_NONE),
             new InputOption('siteaccess', 's', InputOption::VALUE_REQUIRED),
 
+            new InputArgument('user_login', InputArgument::OPTIONAL),
             new InputArgument('include', InputArgument::IS_ARRAY),
         )));
     } catch (\RuntimeException $e) {
@@ -78,15 +79,17 @@ call_user_func(function() {
 $version
 
 Usage:
-  $name [--version] [--help] [files...]
+  $name [--siteaccess=<siteaccess_name>] [--env=<env>] [--debug] [--version] [--help] [user_login]
 
 Options:
+  --siteaccess    -s SiteAccess to use (e.g. ezdemo_site). If not provided, fallbacks to configured default SiteAccess.
   --env           -e Environment to use (defaults to "dev").
   --debug         -d Use debugging if provided. Debug is always on with "dev" environment.
-  --siteaccess    -s SiteAccess to use (e.g. ezdemo_site). If not provided, fallbacks to configured default SiteAccess.
   --help          -h Display this help message.
   --version       -v Display the PsySH version.
   --config        -c Use an alternate PsySH config file location.
+
+  user_login      User login (i.e. username) to use to authenticate against the repository. If not provided, anonymous user will be used.
 
 EOL;
         exit($usageException === null ? 0 : 1);
@@ -123,12 +126,18 @@ EOL;
 
     $container->get('cache_clearer')->clear($kernel->getCacheDir());
 
+    $configResolver = $container->get('ezpublish.config.resolver');
+    /** @var \eZ\Publish\API\Repository\Repository $repository */
+    $repository = $container->get('ezpublish.api.repository');
+    if ($login = $input->getArgument('user_login')) {
+        $repository->setCurrentUser($repository->getUserService()->loadUserByLogin($login));
+    }
 
     $sh->setScopeVariables([
         'kernel' => $kernel,
         'container' => $container,
-        'configResolver' => $container->get('ezpublish.config.resolver'),
-        'repository' => $container->get('ezpublish.api.repository')
+        'configResolver' => $configResolver,
+        'repository' => $repository
     ]);
 
 
