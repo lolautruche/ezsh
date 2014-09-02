@@ -10,7 +10,15 @@
         }
     ],
     "require": {
-        "psy/psysh": "~0.1"
+        "psy/psysh": "dev-develop",
+        "nikic/php-parser": "~1.0@dev",
+        "dnoegel/php-xdg-base-dir": "dev-master",
+        "ezsystems/ezpublish-api": "~5.3 | >=2014.05"
+    },
+    "autoload": {
+        "psr-4": {
+            "Lolart\\EzShell\\": "src/"
+        }
     },
     "bin": ["bin/ezsh"]
 }
