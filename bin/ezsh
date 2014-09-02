@@ -143,6 +143,9 @@ EOL;
 
     // Pass additional arguments to Shell as 'includes'
     $sh->setIncludes($input->getArgument('include'));
+    $sh->addCommands([
+        new \Lolart\EzShell\Command\LoadContentCommand(),
+    ]);
 
     $sh->run();
 });
