@@ -127,8 +127,9 @@ EOL;
     $configResolver = $container->get('ezpublish.config.resolver');
     /** @var \eZ\Publish\API\Repository\Repository $repository */
     $repository = $container->get('ezpublish.api.repository');
-    if ($login = $input->getArgument('user_login')) {
-        $repository->setCurrentUser($repository->getUserService()->loadUserByLogin($login));
+    $userService = $repository->getUserService();
+        if ($login = $input->getArgument('user_login')) {
+        $repository->setCurrentUser($userService->loadUserByLogin($login));
     }
 
     $psyConfig = new Configuration($config);
@@ -143,7 +144,12 @@ EOL;
         'kernel' => $kernel,
         'container' => $container,
         'configResolver' => $configResolver,
-        'repository' => $repository
+        'repository' => $repository,
+        'contentService' => $repository->getContentService(),
+        'contentTypeService' => $repository->getContentTypeService(),
+        'locationService' => $repository->getLocationService(),
+        'searchService' => $repository->getSearchService(),
+        'userService' => $userService
     ]);
 
 
