@@ -60,12 +60,17 @@ Starting from here, you'll be able to evaluate any kind of code in the context o
 ### Available variables
 Some variables are already set for you, like the service container, the ConfigResolver and the Repository:
 
-| Variable          | Description                                                     |
-|-------------------|-----------------------------------------------------------------|
-| `$container`      | Instance of Symfony ServiceContainer. Get your services with it |
-| `$kernel`         | Instance of your `EzPublishKernel`                              |
-| `$repository`     | Instance of the eZ Content repository (to use API)              |
-| `$configResolver` | The ConfigResolver (to get SiteAccess aware settings)           |
+| Variable              | Description                                                     |
+|-----------------------|-----------------------------------------------------------------|
+| `$container`          | Instance of Symfony ServiceContainer. Get your services with it |
+| `$kernel`             | Instance of your `EzPublishKernel`                              |
+| `$repository`         | Instance of the eZ Content repository (to use API)              |
+| `$contentService`     | The ContentService                                              |
+| `$contentTypeService` | The ContentTypeService                                          |
+| `$locationService`    | The LocationService                                             |
+| `$searchService`      | The SearchService                                               |
+| `$userService`        | The UserService                                                 |
+| `$configResolver`     | The ConfigResolver (to get SiteAccess aware settings)           |
 
 ### Example
 
@@ -78,36 +83,30 @@ Debugging eZ Publish using 'default' SiteAccess, in 'dev' environment.
 Psy Shell v0.1.12 (PHP 5.5.15 — cli) by Justin Hileman
 >>> $repository
 => <eZPublishCoreSignalSlotRepository_000000001c2171540000000109a6622a #000000005890a1640000000113a69e24> {}
->>> $contentInfo = $repository->getContentService()->loadContentInfo(60);
-=> <eZ\Publish\API\Repository\Values\Content\ContentInfo #000000005890a2330000000113a69e24> {}
->>> ls -la $contentInfo
-
-Class Properties:
-  $alwaysAvailable    0
-  $contentTypeId      40
-  $currentVersionNo   1
-  $id                 2926
-  $mainLanguageCode   "eng-GB"
-  $mainLocationId     "2928"
-  $modificationDate   <DateTime #0000000005c1481a000000016239202d>
-  $name               "Wheelchair Barleywine"
-  $ownerId            14
-  $published          true
-  $publishedDate      <DateTime #0000000005c1481b000000016239202d>
-  $remoteId           "beer-d7nEsv"
-  $sectionId          1
-
-Class Methods:
-  __construct     public function __construct(array $properties = null)
-  __get           public function __get($property)
-  __isset         public function __isset($property)
-  __set           public function __set($property, $value)
-  __set_state     public static function __set_state(array $array)
-  __unset         public function __unset($property)
-  attribute       final public function attribute($property)
-  attributes      final public function attributes()
-  getProperties   protected function getProperties($dynamicProperties = null)
-  hasAttribute    final public function hasAttribute($property)
+>>> $contentInfo = $contentService->loadContentInfo(2926);
+=> <eZ\Publish\API\Repository\Values\Content\ContentInfo #2926, Wheelchair Barleywine {
+       id: 2926,
+       contentTypeId: 40,
+       name: "Wheelchair Barleywine",
+       sectionId: 1,
+       currentVersionNo: 1,
+       published: true,
+       ownerId: 14,
+       modificationDate: <DateTime #00000000588e6c020000000142ceef3a> {
+           date: "2014-08-28 10:32:44.000000",
+           timezone_type: 3,
+           timezone: "Europe/Paris"
+       },
+       publishedDate: <DateTime #00000000588e6c0c0000000142ceef3a> {
+           date: "2014-08-28 10:32:44.000000",
+           timezone_type: 3,
+           timezone: "Europe/Paris"
+       },
+       alwaysAvailable: 0,
+       remoteId: "beer-d7nEsv",
+       mainLanguageCode: "eng-GB",
+       mainLocationId: "2928"
+   }
 
 >>> $configResolver->getParameter('languages');
 => [
