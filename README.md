@@ -29,7 +29,7 @@ composer require lolautruche/ezsh:~0.1
 ## Usage
 ```bash
 Usage:
-  ezsh [--siteaccess=<siteaccess_name>] [--env=<env>] [--debug] [--version] [--help] [files...]
+  ezsh [--siteaccess=<siteaccess_name>] [--env=<env>] [--debug] [--version] [--help] [user_login]
 
 Options:
   --siteaccess    -s SiteAccess to use (e.g. ezdemo_site). If not provided, fallbacks to configured default SiteAccess.
@@ -38,6 +38,8 @@ Options:
   --help          -h Display this help message.
   --version       -v Display the PsySH version.
   --config        -c Use an alternate PsySH config file location.
+  
+  user_login      User login (i.e. username) to use to authenticate against the repository. If not provided, anonymous user will be used.
 ```
 
 > **Important:** To be able to use `ezsh`, **you first need to be in your eZ project root**:
