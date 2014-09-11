@@ -10,6 +10,7 @@
 
 namespace Lolart\EzShell\Command;
 
+use eZ\Publish\API\Repository\Tests\Regression\EZP20018ObjectStateTest;
 use Psy\Command\ReflectingCommand;
 use Psy\Presenter\Presenter;
 use Psy\Presenter\PresenterManager;
@@ -28,8 +29,14 @@ class LoadContentCommand extends Command
             ->setDescription('Loads a Content from repository by its ID.')
             ->setDefinition([
                 new InputArgument('id', InputArgument::REQUIRED, 'ID of the content'),
-                new InputOption('remote-id', 'r', InputOption::VALUE_NONE, 'If provided, will use the content\'s remote ID')
-            ]);
+                new InputOption('remote-id', 'r', InputOption::VALUE_NONE, 'If provided, will use the content\'s remote ID'),
+                new InputOption('all', 'a', InputOption::VALUE_NONE, 'If provided, the whole content will be loaded, including fields.')
+            ])
+            ->setHelp(<<<EOT
+Loads a Content by its ID and displays it.
+By default, it only loads the ContentInfo object, unless you use --all option.
+EOT
+);
     }
 
     /**
@@ -46,9 +53,11 @@ class LoadContentCommand extends Command
         $id = $input->getArgument('id');
 
         if ($input->getOption('remote-id')) {
-            $content = $contentService->loadContentByRemoteId($id);
+            $method = $input->getOption('all') ? 'loadContentByRemoteId' : 'loadContentByRemoteId';
+            $content = $contentService->$method($id);
         } else {
-            $content = $contentService->loadContent($id);
+            $method = $input->getOption('all') ? 'loadContent' : 'loadContentInfo';
+            $content = $contentService->$method($id);
         }
 
         $output->page($this->presenterManager->present($content, 10, true, Presenter::VERBOSE));
