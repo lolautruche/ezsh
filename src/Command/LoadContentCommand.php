@@ -32,7 +32,7 @@ class LoadContentCommand extends Command
 Loads a Content by its ID and displays it.
 By default, it only loads the ContentInfo object, unless you use --all option.
 EOT
-);
+        );
     }
 
     /**
@@ -49,7 +49,7 @@ EOT
         $id = $input->getArgument('id');
 
         if ($input->getOption('remote-id')) {
-            $method = $input->getOption('all') ? 'loadContentByRemoteId' : 'loadContentByRemoteId';
+            $method = $input->getOption('all') ? 'loadContentByRemoteId' : 'loadContentInfoByRemoteId';
             $content = $contentService->$method($id);
         } else {
             $method = $input->getOption('all') ? 'loadContent' : 'loadContentInfo';
