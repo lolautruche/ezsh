@@ -8,7 +8,7 @@ It allows you to debug live code in the context of an eZ Publish application, av
 ## Install
 ### Global install (recommended)
 ```bash
-composer global require lolautruche/ezsh:dev-master
+composer global require lolautruche/ezsh:~0.1
 ```
 
 This will install `ezsh` executable into the ~/.composer/vendor/bin folder.
@@ -23,7 +23,7 @@ This will install `ezsh` executable into the ~/.composer/vendor/bin folder.
 You can install `ezsh` binary in your eZ project with Composer:
 
 ```bash
-composer require lolautruche/ezsh:dev-master
+composer require lolautruche/ezsh:~0.1
 ```
 
 ## Usage
