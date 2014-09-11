@@ -10,11 +10,7 @@
 
 namespace Lolart\EzShell\Command;
 
-use eZ\Publish\API\Repository\Tests\Regression\EZP20018ObjectStateTest;
-use Psy\Command\ReflectingCommand;
 use Psy\Presenter\Presenter;
-use Psy\Presenter\PresenterManager;
-use Psy\Presenter\PresenterManagerAware;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
