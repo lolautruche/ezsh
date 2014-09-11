@@ -159,6 +159,7 @@ EOL;
     $sh->addCommands([
         new \Lolart\EzShell\Command\CacheClearCommand(),
         new \Lolart\EzShell\Command\LoadContentCommand(),
+        new \Lolart\EzShell\Command\LoadLocationCommand(),
     ]);
 
     $sh->run();
