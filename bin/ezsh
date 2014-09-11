@@ -106,7 +106,9 @@ EOL;
     echo "Debugging eZ Publish using '" . ($siteAccess ?: 'default') . "' SiteAccess, in '$environment' environment." . PHP_EOL . PHP_EOL;
 
     $kernel = new EzPublishKernel($environment, $useDebugging);
-    $kernel->loadClassCache();
+    if (!$useDebugging) {
+        $kernel->loadClassCache();
+    }
     $kernel->boot();
 
     /** @var \Symfony\Component\DependencyInjection\ContainerInterface $container */
@@ -121,8 +123,6 @@ EOL;
     $container->set('ezpublish_legacy.kernel.lazy', null);
     $container->set('ezpublish_legacy.kernel_handler', $legacyHandlerCLI);
     $container->set('ezpublish_legacy.kernel_handler.web', $legacyHandlerCLI);
-
-    $container->get('cache_clearer')->clear($kernel->getCacheDir());
 
     $configResolver = $container->get('ezpublish.config.resolver');
     /** @var \eZ\Publish\API\Repository\Repository $repository */
@@ -156,6 +156,7 @@ EOL;
     // Pass additional arguments to Shell as 'includes'
     $sh->setIncludes($input->getArgument('include'));
     $sh->addCommands([
+        new \Lolart\EzShell\Command\CacheClearCommand(),
         new \Lolart\EzShell\Command\LoadContentCommand(),
     ]);
 
