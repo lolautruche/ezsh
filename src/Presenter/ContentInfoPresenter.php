@@ -15,7 +15,7 @@ use eZ\Publish\API\Repository\Values\Content\ContentInfo;
 
 class ContentInfoPresenter extends ValueObjectPresenter
 {
-    const FMT = '<object>\\<<class>%s</class> <strong>#%d</strong>, <string>%s</string></object>';
+    const FMT = '<object>\\<<class>%s</class> <strong>#%d</strong>, <string>%s</string>></object>';
 
     public function canPresent($value)
     {
