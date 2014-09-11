@@ -138,6 +138,7 @@ EOL;
     $presenterManager->addPresenter(new \Lolart\EzShell\Presenter\ValueObjectPresenter());
     $presenterManager->addPresenter(new \Lolart\EzShell\Presenter\ContentInfoPresenter());
     $presenterManager->addPresenter(new \Lolart\EzShell\Presenter\ContentPresenter($repository));
+    $presenterManager->addPresenter(new \Lolart\EzShell\Presenter\LocationPresenter($repository));
 
     $sh = new Shell($psyConfig);
     $sh->setScopeVariables([
