@@ -12,10 +12,10 @@ namespace Lolart\EzShell\Command;
 
 use Psy\Command\ReflectingCommand;
 use Psy\Context;
-use Psy\Presenter\PresenterManager;
-use Psy\Presenter\PresenterManagerAware;
+use Psy\VarDumper\Presenter;
+use Psy\VarDumper\PresenterAware;
 
-class Command extends ReflectingCommand implements PresenterManagerAware
+class Command extends ReflectingCommand implements PresenterAware
 {
     /**
      * @var \eZ\Publish\API\Repository\Repository
@@ -33,18 +33,18 @@ class Command extends ReflectingCommand implements PresenterManagerAware
     protected $container;
 
     /**
-     * @var \Psy\Presenter\PresenterManager
+     * @var \Psy\VarDumper\Presenter
      */
-    protected $presenterManager;
+    protected $presenter;
 
     /**
-     * Set a reference to the PresenterManager.
+     * Set a reference to the Presenter.
      *
-     * @param PresenterManager $manager
+     * @param Presenter $presenter
      */
-    public function setPresenterManager(PresenterManager $manager)
+    public function setPresenter(Presenter $presenter)
     {
-        $this->presenterManager = $manager;
+        $this->presenter = $presenter;
     }
 
     public function setContext(Context $context)

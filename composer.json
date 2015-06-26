@@ -10,7 +10,7 @@
         }
     ],
     "require": {
-        "psy/psysh": "~0.2",
+        "psy/psysh": "~0.5@dev",
         "ezsystems/ezpublish-api": "~5.3 | >=2014.05"
     },
     "autoload": {
