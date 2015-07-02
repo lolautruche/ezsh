@@ -180,9 +180,9 @@ abstract class WrappedCommand extends Command
         return $this->innerCommand->getAliases();
     }
 
-    public function getSynopsis()
+    public function getSynopsis($short = false)
     {
-        return $this->innerCommand->getSynopsis();
+        return $this->innerCommand->getSynopsis($short);
     }
 
     public function getHelper($name)
