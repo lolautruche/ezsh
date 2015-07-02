@@ -8,7 +8,7 @@ It allows you to debug live code in the context of an eZ Publish application, av
 ## Install
 ### Global install (recommended)
 ```bash
-composer global require nikic/php-parser:~1.0@dev dnoegel/php-xdg-base-dir:dev-master lolautruche/ezsh:~0.1
+composer global require lolautruche/ezsh:~0.1
 ```
 
 This will install `ezsh` executable into the ~/.composer/vendor/bin folder.
@@ -23,7 +23,7 @@ This will install `ezsh` executable into the ~/.composer/vendor/bin folder.
 You can install `ezsh` binary in your eZ project with Composer:
 
 ```bash
-composer require nikic/php-parser:~1.0@dev dnoegel/php-xdg-base-dir:dev-master lolautruche/ezsh:~0.1
+composer require lolautruche/ezsh:~0.1
 ```
 
 ## Usage
