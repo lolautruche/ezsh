@@ -10,7 +10,7 @@
 
 namespace Lolart\EzShell\Command;
 
-use Psy\Presenter\Presenter;
+use Psy\VarDumper\Presenter;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -52,6 +52,6 @@ EOT
             $location = $locationService->loadLocation($id);
         }
 
-        $output->page($this->presenterManager->present($location, 10, true, Presenter::VERBOSE));
+        $output->page($this->presenter->present($location, 10, true, Presenter::VERBOSE));
     }
 }

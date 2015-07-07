@@ -133,12 +133,14 @@ EOL;
     }
 
     $psyConfig = new Configuration($config);
-    // Adding presenters for eZ value objects.
-    $presenterManager = $psyConfig->getPresenterManager();
-    $presenterManager->addPresenter(new \Lolart\EzShell\Presenter\ValueObjectPresenter());
-    $presenterManager->addPresenter(new \Lolart\EzShell\Presenter\ContentInfoPresenter());
-    $presenterManager->addPresenter(new \Lolart\EzShell\Presenter\ContentPresenter($repository));
-    $presenterManager->addPresenter(new \Lolart\EzShell\Presenter\LocationPresenter($repository));
+    // Adding casters for eZ value objects.
+    $caster = new \Lolart\EzShell\EzCaster($repository);
+    $presenter = $psyConfig->getPresenter();
+    $presenter->addCasters([
+        'eZ\Publish\API\Repository\Values\Content\Content' => [$caster, 'castContent'],
+        'eZ\Publish\API\Repository\Values\Content\ContentInfo' => [$caster, 'castContentInfo'],
+        'eZ\Publish\API\Repository\Values\Content\Location' => [$caster, 'castLocation'],
+    ]);
 
     $sh = new Shell($psyConfig);
     $sh->setScopeVariables([

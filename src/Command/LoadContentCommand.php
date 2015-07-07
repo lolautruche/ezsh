@@ -10,7 +10,7 @@
 
 namespace Lolart\EzShell\Command;
 
-use Psy\Presenter\Presenter;
+use Psy\VarDumper\Presenter;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -56,6 +56,6 @@ EOT
             $content = $contentService->$method($id);
         }
 
-        $output->page($this->presenterManager->present($content, 10, true, Presenter::VERBOSE));
+        $output->page($this->presenter->present($content, 10, true, Presenter::VERBOSE));
     }
 }
