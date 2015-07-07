@@ -118,11 +118,13 @@ EOL;
         new SiteAccess($input->getOption('siteaccess') ?: $container->getParameter('ezpublish.siteaccess.default'))
     );
 
-    // Force CLI mode for legacy stack.
-    $legacyHandlerCLI = $container->get( 'ezpublish_legacy.kernel_handler.cli' );
-    $container->set('ezpublish_legacy.kernel.lazy', null);
-    $container->set('ezpublish_legacy.kernel_handler', $legacyHandlerCLI);
-    $container->set('ezpublish_legacy.kernel_handler.web', $legacyHandlerCLI);
+    if ($container->hasParameter('ezpublish_legacy.enabled') && $container->getParameter('ezpublish_legacy.enabled') === true) {
+        // Force CLI mode for legacy stack.
+        $legacyHandlerCLI = $container->get('ezpublish_legacy.kernel_handler.cli');
+        $container->set('ezpublish_legacy.kernel.lazy', null);
+        $container->set('ezpublish_legacy.kernel_handler', $legacyHandlerCLI);
+        $container->set('ezpublish_legacy.kernel_handler.web', $legacyHandlerCLI);
+    }
 
     $configResolver = $container->get('ezpublish.config.resolver');
     /** @var \eZ\Publish\API\Repository\Repository $repository */
