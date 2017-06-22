@@ -28,8 +28,8 @@ if (is_file(__DIR__ . '/../autoload.php')) {
 }
 /* >>> */
 
-require_once getcwd().'/ezpublish/autoload.php';
-require_once getcwd().'/ezpublish/EzPublishKernel.php';
+require_once getcwd().'/app/autoload.php';
+require_once getcwd().'/app/AppKernel.php';
 
 call_user_func(function() {
 
@@ -105,7 +105,7 @@ EOL;
     // #####
     echo "Debugging eZ Publish using '" . ($siteAccess ?: 'default') . "' SiteAccess, in '$environment' environment." . PHP_EOL . PHP_EOL;
 
-    $kernel = new EzPublishKernel($environment, $useDebugging);
+    $kernel = new AppKernel($environment, $useDebugging);
     if (!$useDebugging) {
         $kernel->loadClassCache();
     }
