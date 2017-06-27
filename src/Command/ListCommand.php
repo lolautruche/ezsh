@@ -36,21 +36,21 @@ class ListCommand extends Command
         $query->limit = 0;
         $query->sortClauses = [new ContentName()];
 
-        $searchResult = $searchService->findLocations($query);
+        $countSearchResult = $searchService->findLocations($query);
+        $totalCount = $countSearchResult->totalCount;
 
-        $nbResults = $searchResult->totalCount;
+        $query->limit = 100;
 
-        $pageSize = 100;
-        $query->limit = $pageSize;
-
-        while ($searchHits = $searchService->findLocations($query)->searchHits) {
-            foreach ($searchHits as $searchHit) {
-                $output->writeln($searchHit->valueObject->id . " " . $searchHit->valueObject->contentInfo->name);
+        $output->page(function ($output) use ($searchService, $query, $totalCount) {
+            while ($searchHits = $searchService->findLocations($query)->searchHits) {
+                foreach ($searchHits as $searchHit) {
+                    $output->writeln($searchHit->valueObject->contentInfo->name . " (" . $searchHit->valueObject->id . ")");
+                }
+                $query->offset += $query->limit;
+                if ($query->offset > $totalCount) {
+                    break;
+                }
             }
-            $query->offset += $pageSize;
-            if ($query->offset > $nbResults) {
-                break;
-            }
-        }
+        });
     }
 }
