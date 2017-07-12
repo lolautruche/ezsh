@@ -162,8 +162,12 @@ EOL;
     $sh->setIncludes($input->getArgument('include'));
     $sh->addCommands([
         new \Lolart\EzShell\Command\CacheClearCommand(),
+        new \Lolart\EzShell\Command\CopyCommand(),
         new \Lolart\EzShell\Command\LoadContentCommand(),
         new \Lolart\EzShell\Command\LoadLocationCommand(),
+        new \Lolart\EzShell\Command\ListCommand(),
+        new \Lolart\EzShell\Command\MoveCommand(),
+        new \Lolart\EzShell\Command\RemoveCommand()
     ]);
 
     $sh->run();

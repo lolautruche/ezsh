@@ -10,8 +10,8 @@
         }
     ],
     "require": {
-        "psy/psysh": "~0.5",
-        "ezsystems/ezpublish-kernel": "^6.9@rc"
+        "psy/psysh": "^0.8",
+        "ezsystems/ezpublish-api": "^6.0@rc"
     },
     "suggest": {
         "ezsystems/legacy-bridge": "Provides the full legacy backoffice and legacy features"
