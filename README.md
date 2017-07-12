@@ -8,8 +8,10 @@ It allows you to debug live code in the context of an eZ Publish application, av
 ## Install
 ### Global install (recommended)
 ```bash
-composer global require lolautruche/ezsh:~0.1
+composer global require lolautruche/ezsh:^2.0
 ```
+
+> `v1.0` is compatible with eZ Publish 5.3+ while `v2.0` is only compatible with eZ Platform.
 
 This will install `ezsh` executable into the ~/.composer/vendor/bin folder.
 
@@ -23,7 +25,7 @@ This will install `ezsh` executable into the ~/.composer/vendor/bin folder.
 You can install `ezsh` binary in your eZ project with Composer:
 
 ```bash
-composer require lolautruche/ezsh:~0.1
+composer require lolautruche/ezsh:^2.0
 ```
 
 ## Usage
@@ -53,7 +55,7 @@ This will display something like:
 
 ```bash
 Debugging eZ Publish using 'my_siteaccess' SiteAccess, in 'dev' environment.
-Psy Shell v0.1.12 (PHP 5.5.15 — cli) by Justin Hileman
+Psy Shell v0.8.9 (PHP 7.0.19 — cli) by Justin Hileman
 >>>
 ```
 
