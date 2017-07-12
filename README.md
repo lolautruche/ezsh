@@ -1,6 +1,6 @@
 # eZ Debug Shell
 
-eZ Debug Shell is an interactive CLI debugger for eZ Publish 5+.
+eZ Debug Shell is an interactive CLI debugger for eZ Platform.
 It is built on top of [PsySH](http://psysh.org) and thus acts as a [*Read-eval-print-loop* (aka **repl**)](http://en.wikipedia.org/wiki/Read%E2%80%93eval%E2%80%93print_loop).
 
 It allows you to debug live code in the context of an eZ Publish application, avoiding to create CLI commands.
@@ -80,7 +80,7 @@ Some variables are already set for you, like the service container, the ConfigRe
 > For more information see [PsySH documentation](http://psysh.org).
 
 ```bash
-Debugging eZ Publish using 'default' SiteAccess, in 'dev' environment.
+Debugging eZ Platform using 'default' SiteAccess, in 'dev' environment.
 
 Psy Shell v0.1.12 (PHP 5.5.15 — cli) by Justin Hileman
 >>> $repository
